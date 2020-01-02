@@ -31,11 +31,36 @@ const Game: React.FC = () => {
   const gameBoardCount = 9;
   const [gameState, setGameState] = React.useState(getInitialGameState());
 
-  const makeMove = (boardIndex: number, row: number, col: number) => {
-    console.log(boardIndex, row, col);
+  const makeMove = (
+    boardIndex: number,
+    row: number,
+    col: number,
+    value: 'X' | 'O'
+  ) => {
+    const boardState = gameState[boardIndex].slice();
+    boardState[row][col] = value;
+    setGameState(prevState => [
+      ...prevState.slice(0, boardIndex),
+      boardState,
+      ...prevState.slice(boardIndex + 1)
+    ]);
   };
 
-  const isGameBoardWon = (boardIndex: number) => false;
+  const isGameBoardWon = (boardIndex: number) => {
+    const boardState = gameState[boardIndex];
+    return (
+      (boardState[0][0] === boardState[0][1] &&
+        boardState[0][1] === boardState[0][2]) ||
+      (boardState[1][0] === boardState[1][1] &&
+        boardState[1][1] === boardState[1][2]) ||
+      (boardState[2][0] === boardState[2][1] &&
+        boardState[2][1] === boardState[2][2]) ||
+      (boardState[0][0] === boardState[1][1] &&
+        boardState[1][1] === boardState[2][2]) ||
+      (boardState[0][2] === boardState[1][1] &&
+        boardState[1][1] === boardState[2][0])
+    );
+  };
 
   const isGameWon = () => {
     return (
@@ -57,16 +82,15 @@ const Game: React.FC = () => {
     for (let row = 0, boardIndex = 0; row < gridSize; row++) {
       const rowBoards = [];
       (bIndex => {
-        console.log('bIndex', bIndex);
         for (let col = 0; col < gridSize; col++) {
           rowBoards.push(
             <GameBoard
               key={row + col}
               gameState={gameState[boardIndex]}
-              isWon={false}
+              isWon={isGameBoardWon(boardIndex)}
               onClick={(row, col) =>
                 (bIdx => {
-                  makeMove(bIdx, row, col);
+                  makeMove(bIdx, row, col, 'X');
                 })(bIndex)
               }
             />
