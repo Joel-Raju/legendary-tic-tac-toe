@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import GridCell from './GridCell';
+import { PlayerType } from '../common/types';
 
 const StyledBoard = styled.div`
   display: inline-block;
@@ -22,12 +23,18 @@ const StyledBoard = styled.div`
 `;
 
 interface Props {
+  playerType: PlayerType;
   gameState: [];
   isWon: boolean;
   onClick: (row: number, col: number) => any;
 }
 
-const GameBoard: React.FC<Props> = ({ gameState, isWon, onClick }) => {
+const GameBoard: React.FC<Props> = ({
+  gameState,
+  isWon,
+  onClick,
+  playerType
+}) => {
   const handleClick = (row: number, col: number) => {
     if (gameState[row][col]) {
       return;
@@ -44,7 +51,7 @@ const GameBoard: React.FC<Props> = ({ gameState, isWon, onClick }) => {
         cells.push(
           <GridCell
             key={row + col}
-            type='empty'
+            playerType={playerType}
             value={gameState[row][col]}
             onClick={() => handleClick(row, col)}
           />

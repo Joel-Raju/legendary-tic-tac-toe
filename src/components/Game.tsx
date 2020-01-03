@@ -1,6 +1,15 @@
 import React from 'react';
-import GameBoard from './GameBoard';
 import styled from 'styled-components';
+import reducer, {
+  State as AppState,
+  InitialState as AppInitialState,
+  Action as AppAction
+} from '../store/gameReducer';
+import GameBoard from './GameBoard';
+import { PlayerType } from '../common/types';
+import { isBoardWon } from '../common/utils';
+import Button from './Button';
+import { ActionTypes } from '../store/actionTypes';
 
 const StyledGame = styled.div`
   border-radius: 3px;
@@ -15,10 +24,10 @@ const getInitialGameState = () => {
   const gameBoardCount = 9;
   const gridSize = 3;
   const initialState = new Array(gameBoardCount);
-  for (let board = 0; board < gameBoardCount; board++) {
+  for (let board = 0; board < gameBoardCount; board += 1) {
     const rowCount = gridSize;
     const gameGrid = new Array(3);
-    for (let j = 0; j < rowCount; j++) {
+    for (let j = 0; j < rowCount; j += 1) {
       gameGrid[j] = new Array(gridSize);
     }
     initialState[board] = gameGrid;
@@ -29,13 +38,18 @@ const getInitialGameState = () => {
 
 const Game: React.FC = () => {
   const gameBoardCount = 9;
+
   const [gameState, setGameState] = React.useState(getInitialGameState());
+
+  const [appState, dispatch] = React.useReducer<
+    React.Reducer<AppState, AppAction>
+  >(reducer, AppInitialState);
 
   const makeMove = (
     boardIndex: number,
     row: number,
     col: number,
-    value: 'X' | 'O'
+    value: PlayerType
   ) => {
     const boardState = gameState[boardIndex].slice();
     boardState[row][col] = value;
@@ -48,18 +62,7 @@ const Game: React.FC = () => {
 
   const isGameBoardWon = (boardIndex: number) => {
     const boardState = gameState[boardIndex];
-    return (
-      (boardState[0][0] === boardState[0][1] &&
-        boardState[0][1] === boardState[0][2]) ||
-      (boardState[1][0] === boardState[1][1] &&
-        boardState[1][1] === boardState[1][2]) ||
-      (boardState[2][0] === boardState[2][1] &&
-        boardState[2][1] === boardState[2][2]) ||
-      (boardState[0][0] === boardState[1][1] &&
-        boardState[1][1] === boardState[2][2]) ||
-      (boardState[0][2] === boardState[1][1] &&
-        boardState[1][1] === boardState[2][0])
-    );
+    return !!isBoardWon(boardState);
   };
 
   const isGameWon = () => {
@@ -75,27 +78,31 @@ const Game: React.FC = () => {
     );
   };
 
+  const startNewGame = () => {
+    setGameState(getInitialGameState());
+    dispatch({ type: ActionTypes.INCREMENT_NUM_OF_GAMES });
+  };
+
   const renderGameBoards = () => {
     const gridSize = 3;
     const gameBoards: any = [];
 
-    for (let row = 0, boardIndex = 0; row < gridSize; row++) {
+    for (let row = 0, boardIndex = 0; row < gridSize; row += 1) {
       const rowBoards = [];
       (bIndex => {
-        for (let col = 0; col < gridSize; col++) {
+        for (let col = 0; col < gridSize; col += 1) {
           rowBoards.push(
             <GameBoard
               key={row + col}
+              playerType={appState.playerType}
               gameState={gameState[boardIndex]}
               isWon={isGameBoardWon(boardIndex)}
-              onClick={(row, col) =>
-                (bIdx => {
-                  makeMove(bIdx, row, col, 'X');
-                })(bIndex)
+              onClick={(bRow, bCol) =>
+                makeMove(bIndex, bRow, bCol, appState.playerType)
               }
             />
           );
-          boardIndex++;
+          boardIndex += 1;
         }
         gameBoards.push(
           <div className='row' key={row}>
@@ -108,7 +115,16 @@ const Game: React.FC = () => {
     return gameBoards;
   };
 
-  return <StyledGame>{renderGameBoards()}</StyledGame>;
+  return (
+    <StyledGame>
+      <div>
+        <Button onClick={startNewGame}>New Game</Button>
+        Is game won:
+        {isGameWon() ? 'true' : 'false'}
+      </div>
+      {renderGameBoards()}
+    </StyledGame>
+  );
 };
 
 export default Game;

@@ -1,4 +1,4 @@
-export const enum ActionTypes {
+export enum ActionTypes {
   SET_PLAYER_TYPE = 'SET_PLAYER_TYPE',
   INCREMENT_SCORE = 'INCREMENT_SCORE',
   INCREMENT_NUM_OF_GAMES = 'INCREMENT_NUM_OF_GAMES'

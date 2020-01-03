@@ -1,24 +1,25 @@
 import React from 'react';
 import { ActionTypes } from './actionTypes';
+import { PlayerType } from '../common/types';
 
-export interface IState {
-  playerType: 'X' | 'O' | undefined;
+export interface State {
+  playerType: PlayerType;
   winTimes: number;
   numOfGames: number;
 }
 
-export const initialState: IState = {
+export const InitialState: State = {
   numOfGames: 0,
-  playerType: undefined,
+  playerType: 'X',
   winTimes: 0
 };
 
-interface IAction {
+export interface Action {
   type: ActionTypes;
-  payload: any;
+  payload?: any;
 }
 
-const reducer: React.Reducer<IState, IAction> = (state: IState, action) => {
+const reducer: React.Reducer<State, Action> = (state: State, action) => {
   const { type, payload } = action;
 
   switch (type) {
