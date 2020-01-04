@@ -7,7 +7,7 @@ import reducer, {
 } from '../store/gameReducer';
 import GameBoard from './GameBoard';
 import { PlayerType } from '../common/types';
-import { isBoardWon } from '../common/utils';
+import { isBoardWon, getInitialGameState } from '../common/gameplayUtils';
 import Button from './Button';
 import { ActionTypes } from '../store/actionTypes';
 
@@ -20,26 +20,13 @@ const StyledGame = styled.div`
   }
 `;
 
-const getInitialGameState = () => {
-  const gameBoardCount = 9;
-  const gridSize = 3;
-  const initialState = new Array(gameBoardCount);
-  for (let board = 0; board < gameBoardCount; board += 1) {
-    const rowCount = gridSize;
-    const gameGrid = new Array(3);
-    for (let j = 0; j < rowCount; j += 1) {
-      gameGrid[j] = new Array(gridSize);
-    }
-    initialState[board] = gameGrid;
-  }
-
-  return initialState;
-};
+const BOARD_COUNT = 9;
+const GRID_SIZE = 3;
 
 const Game: React.FC = () => {
-  const gameBoardCount = 9;
-
-  const [gameState, setGameState] = React.useState(getInitialGameState());
+  const [gameState, setGameState] = React.useState(
+    getInitialGameState(BOARD_COUNT, GRID_SIZE)
+  );
 
   const [appState, dispatch] = React.useReducer<
     React.Reducer<AppState, AppAction>
@@ -79,7 +66,7 @@ const Game: React.FC = () => {
   };
 
   const startNewGame = () => {
-    setGameState(getInitialGameState());
+    setGameState(getInitialGameState(BOARD_COUNT, GRID_SIZE));
     dispatch({ type: ActionTypes.INCREMENT_NUM_OF_GAMES });
   };
 
@@ -89,27 +76,30 @@ const Game: React.FC = () => {
 
     for (let row = 0, boardIndex = 0; row < gridSize; row += 1) {
       const rowBoards = [];
-      (bIndex => {
-        for (let col = 0; col < gridSize; col += 1) {
+      for (let col = 0; col < gridSize; col += 1) {
+        // eslint-disable-next-line no-loop-func
+        (bIndex => {
           rowBoards.push(
             <GameBoard
               key={row + col}
               playerType={appState.playerType}
-              gameState={gameState[boardIndex]}
-              isWon={isGameBoardWon(boardIndex)}
-              onClick={(bRow, bCol) =>
-                makeMove(bIndex, bRow, bCol, appState.playerType)
+              gameState={gameState[bIndex]}
+              isWon={isGameBoardWon(bIndex)}
+              onClick={
+                (bRow, bCol) =>
+                  makeMove(bIndex, bRow, bCol, appState.playerType)
+                // eslint-disable-next-line react/jsx-curly-newline
               }
             />
           );
           boardIndex += 1;
-        }
-        gameBoards.push(
-          <div className='row' key={row}>
-            {rowBoards}
-          </div>
-        );
-      })(boardIndex);
+        })(boardIndex);
+      }
+      gameBoards.push(
+        <div className='row' key={row}>
+          {rowBoards}
+        </div>
+      );
     }
 
     return gameBoards;

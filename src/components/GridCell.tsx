@@ -34,8 +34,10 @@ const StyledCell = styled.div<{ type: CellType }>`
 
   .inner-value {
     flex: 1;
-    font-size: 2rem;
+    font-size: 2.5rem;
     text-align: center;
+    font-weight: bold;
+    fontsize: 3rem;
     color: ${props => (props.type === CellType.BOT ? `#ffffff` : `#776e65`)};
   }
 `;
