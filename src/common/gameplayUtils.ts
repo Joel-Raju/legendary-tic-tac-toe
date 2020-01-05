@@ -1,4 +1,4 @@
-import { GameBoardState, PlayerType } from './types';
+import { GameBoardState, PlayerType } from "./types";
 
 export const getWinConfigs = (
   gridSize: number
@@ -137,7 +137,10 @@ export const isBoardWon = (
   return false;
 };
 
-export const isGameWon = (gameBoards: Array<GameBoardState>) => {
+export const isGameWon = (
+  gameBoards: Array<GameBoardState>,
+  numberOfBoards: number
+) => {
   // return (
   //   (isBoardWon(0) && isBoardWon(1) && isBoardWon(2)) ||
   //   (isBoardWon(3) && isBoardWon(4) && isBoardWon(5)) ||
@@ -203,3 +206,25 @@ export const getWinningMove = (
 
   return winningMove.length ? winningMove : undefined;
 };
+
+export const getWinningBoards = (
+  gameBoards: Array<GameBoardState>,
+  playerType: PlayerType,
+  gridSize: number
+) => {
+  const winningBoards: { [key: number]: GameBoardState } = [];
+
+  gameBoards.forEach((board, index) => {
+    if (!isBoardWon(board)) {
+      const winningMove = getWinningMove(board, playerType, gridSize);
+      if (winningMove) {
+        winningBoards[index] = board;
+      }
+    }
+  });
+  return winningBoards;
+};
+
+export const getGameWinningBoard = (gameBoards: Array<GameBoardState>) => {};
+
+export const getBoardToPlay = () => {};
