@@ -63,19 +63,18 @@ const Game: React.FC = () => {
       appState.boardCount
     );
 
-    console.log("opponentMove ===", opponentMove);
-
     if (opponentMove) {
       const keys = Object.keys(opponentMove);
       const bIndex = parseInt(keys[0], 10);
       const [rowIdx, colIdx] = opponentMove[bIndex];
+
       makeMove(bIndex, rowIdx, colIdx, appState.botType);
     }
   };
 
   const isGameBoardWon = (boardIndex: number) => {
     const boardState = gameState[boardIndex];
-    return !!isBoardWon(boardState, appState.playerType);
+    return !!isBoardWon(boardState, appState.playerType, appState.gridSize);
   };
 
   const isGameWon = () => {

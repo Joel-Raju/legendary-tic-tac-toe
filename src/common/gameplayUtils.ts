@@ -40,105 +40,65 @@ export const getWinConfigs = (
 
 export const isBoardWon = (
   gameState: GameBoardState,
-  playerType: PlayerType
+  playerType: PlayerType,
+  gridSize: number
 ): Array<Array<number>> | undefined => {
-  if (
-    playerType === gameState[0][0] &&
-    gameState[0][0] === gameState[0][1] &&
-    gameState[0][1] === gameState[0][2]
-  ) {
-    return [
-      [0, 0],
-      [0, 1],
-      [0, 2]
-    ];
-  }
+  const possibleWinningConfigs = getWinConfigs(gridSize);
+  let wonConfig: Array<Array<number>> = [];
 
-  if (
-    playerType === gameState[1][0] &&
-    gameState[1][0] === gameState[1][1] &&
-    gameState[1][1] === gameState[1][2]
-  ) {
-    return [
-      [1, 0],
-      [1, 1],
-      [1, 2]
-    ];
-  }
+  possibleWinningConfigs.forEach(config => {
+    const [c1, c2, c3] = config;
+    const [x1, y1] = c1;
+    const [x2, y2] = c2;
+    const [x3, y3] = c3;
 
-  if (
-    playerType === gameState[2][0] &&
-    gameState[2][0] === gameState[2][1] &&
-    gameState[2][1] === gameState[2][2]
-  ) {
-    return [
-      [2, 0],
-      [2, 1],
-      [2, 2]
-    ];
-  }
+    if (
+      gameState[x1][y1] === playerType &&
+      gameState[x1][y1] === gameState[x2][y2] &&
+      !wonConfig.length
+    ) {
+      wonConfig = [c1, c2, c3];
+    }
 
-  if (
-    playerType === gameState[0][0] &&
-    gameState[0][0] === gameState[1][0] &&
-    gameState[1][0] === gameState[2][0]
-  ) {
-    return [
-      [0, 0],
-      [1, 0],
-      [2, 0]
-    ];
-  }
+    if (
+      gameState[x1][y1] === playerType &&
+      gameState[x1][y1] === gameState[x3][y3] &&
+      !wonConfig.length
+    ) {
+      wonConfig = [c1, c2, c3];
+    }
 
-  if (
-    playerType === gameState[0][1] &&
-    gameState[0][1] === gameState[1][1] &&
-    gameState[1][1] === gameState[2][1]
-  ) {
-    return [
-      [0, 1],
-      [1, 1],
-      [2, 1]
-    ];
-  }
+    if (
+      gameState[x2][y2] === playerType &&
+      gameState[x2][y2] === gameState[x3][y3] &&
+      !wonConfig.length
+    ) {
+      wonConfig = [c1, c2, c3];
+    }
+  });
 
-  if (
-    playerType === gameState[0][2] &&
-    gameState[0][2] === gameState[1][2] &&
-    gameState[1][2] === gameState[2][2]
-  ) {
-    return [
-      [0, 2],
-      [1, 2],
-      [2, 2]
-    ];
-  }
-
-  if (
-    playerType === gameState[0][0] &&
-    gameState[0][0] === gameState[1][1] &&
-    gameState[1][1] === gameState[2][2]
-  ) {
-    return [
-      [0, 0],
-      [1, 1],
-      [2, 2]
-    ];
-  }
-
-  if (
-    playerType === gameState[0][2] &&
-    gameState[0][2] === gameState[1][1] &&
-    gameState[1][1] === gameState[2][0]
-  ) {
-    return [
-      [0, 2],
-      [1, 1],
-      [2, 0]
-    ];
+  if (wonConfig.length) {
+    return wonConfig;
   }
 
   return undefined;
+};
+
+export const getEmptyPositions = (
+  gamestate: GameBoardState,
+  gridSize: number
+): Array<number[]> => {
+  const emptyPositions: Array<number[]> = [];
+
+  for (let x = 0; x < gridSize; x += 1) {
+    for (let y = 0; y < gridSize; y += 1) {
+      if (!gamestate[x][y]) {
+        emptyPositions.push([x, y]);
+      }
+    }
+  }
+
+  return emptyPositions;
 };
 
 export const isGameWon = (
@@ -172,7 +132,7 @@ export const getInitialGameState = (boardCount: number, gridSize: number) => {
   return initialState;
 };
 
-export const getWinningMove = (
+export const getWinningMoveOnBoard = (
   gameState: GameBoardState,
   playerType: PlayerType,
   gridSize: number
@@ -182,26 +142,32 @@ export const getWinningMove = (
 
   winningConfigs.forEach(config => {
     const [pos1, pos2, pos3] = config;
+    const [x1, y1] = pos1;
+    const [x2, y2] = pos2;
+    const [x3, y3] = pos3;
 
     if (
-      gameState[pos1[0]][pos1[1]] === playerType &&
-      gameState[pos1[0]][pos1[1]] === gameState[pos2[0]][pos2[1]] &&
+      gameState[x1][y1] === playerType &&
+      gameState[x1][y1] === gameState[x2][y2] &&
+      !gameState[x3][y3] &&
       !winningMove.length
     ) {
       winningMove = pos3;
     }
 
     if (
-      gameState[pos1[0]][pos1[1]] === playerType &&
-      gameState[pos1[0]][pos1[1]] === gameState[pos3[0]][pos3[1]] &&
+      gameState[x1][y1] === playerType &&
+      gameState[x1][y1] === gameState[x3][y3] &&
+      !gameState[x2][y2] &&
       !winningMove.length
     ) {
       winningMove = pos2;
     }
 
     if (
-      gameState[pos2[0]][pos2[1]] === playerType &&
-      gameState[pos2[0]][pos2[1]] === gameState[pos3[0]][pos3[1]] &&
+      gameState[x2][y2] === playerType &&
+      gameState[x2][y2] === gameState[x3][y3] &&
+      !gameState[x1][y1] &&
       !winningMove.length
     ) {
       winningMove = pos1;
@@ -211,21 +177,29 @@ export const getWinningMove = (
   return winningMove.length ? winningMove : undefined;
 };
 
-export const getNonStaleMoveOnBoard = (
-  gamestate: GameBoardState,
+export const getOptimalMoveOnBoard = (
+  gameState: GameBoardState,
   playerType: PlayerType,
   gridSize: number
-): number[] | undefined => {
-  let isMoveLeft = false;
+): number[] => {
+  const opponentPlayer: PlayerType = playerType === "X" ? "O" : "X";
 
-  for (let x = 0; x < gridSize; x += 1) {
-    for (let y = 0; y < gridSize; y += 1) {
-      if (!!gamestate[x][y] && !isMoveLeft) {
-        isMoveLeft = true;
-      }
-    }
+  let optimalMove = getWinningMoveOnBoard(gameState, playerType, gridSize);
+
+  if (!optimalMove) {
+    optimalMove = getWinningMoveOnBoard(gameState, opponentPlayer, gridSize);
   }
-  return [];
+
+  if (!optimalMove) {
+    const emptyPos = getEmptyPositions(gameState, gridSize);
+
+    const availablePos = emptyPos.length;
+
+    optimalMove =
+      availablePos > 1 ? emptyPos[getRandomInt(availablePos)] : emptyPos[0];
+  }
+
+  return optimalMove;
 };
 
 export const getWinningBoardIndices = (
@@ -235,20 +209,31 @@ export const getWinningBoardIndices = (
 ) => {
   const winningBoardIndices: number[] = [];
 
+  const opponentPlayer: PlayerType = playerType === "X" ? "O" : "X";
+
   gameBoards.forEach((board, index) => {
-    if (!isBoardWon(board, playerType)) {
-      const winningMove = getWinningMove(board, playerType, gridSize);
+    const availableMoveCount = getEmptyPositions(board, gridSize);
+
+    if (
+      !isBoardWon(board, playerType, gridSize) &&
+      !isBoardWon(board, opponentPlayer, gridSize) &&
+      availableMoveCount.length
+    ) {
+      const winningMove = getWinningMoveOnBoard(board, playerType, gridSize);
+
       if (winningMove) {
         winningBoardIndices.push(index);
       }
     }
   });
+
   return winningBoardIndices;
 };
 
 export const getGameWinningBoardIndices = (
   gameBoards: Array<GameBoardState>,
-  playerType: PlayerType
+  playerType: PlayerType,
+  gridSize: number
 ): number[] => {
   const gameWinningBoards: number[] = [];
 
@@ -271,19 +256,38 @@ export const getGameWinningBoardIndices = (
 
     const opponentPlayer: PlayerType = playerType === "X" ? "O" : "X";
 
-    const isB1Won = !!isBoardWon(b1, playerType);
-    const isB2Won = !!isBoardWon(b2, playerType);
-    const isB3Won = !!isBoardWon(b3, playerType);
+    const isB1Won = !!isBoardWon(b1, playerType, gridSize);
+    const isB2Won = !!isBoardWon(b2, playerType, gridSize);
+    const isB3Won = !!isBoardWon(b3, playerType, gridSize);
 
-    if (isB1Won && isB2Won && !!isBoardWon(b3, opponentPlayer)) {
+    const movesOnB1 = getEmptyPositions(b1, gridSize);
+    const movesOnB2 = getEmptyPositions(b2, gridSize);
+    const movesOnB3 = getEmptyPositions(b3, gridSize);
+
+    if (
+      isB1Won &&
+      isB2Won &&
+      movesOnB3.length &&
+      !!isBoardWon(b3, opponentPlayer, gridSize)
+    ) {
       gameWinningBoards.push(pos3);
     }
 
-    if (isB2Won && isB3Won && !!isBoardWon(b1, opponentPlayer)) {
+    if (
+      isB2Won &&
+      isB3Won &&
+      movesOnB1.length &&
+      !!isBoardWon(b1, opponentPlayer, gridSize)
+    ) {
       gameWinningBoards.push(pos1);
     }
 
-    if (isB1Won && isB3Won && !!isBoardWon(b2, opponentPlayer)) {
+    if (
+      isB1Won &&
+      isB3Won &&
+      movesOnB2.length &&
+      !!isBoardWon(b2, opponentPlayer, gridSize)
+    ) {
       gameWinningBoards.push(pos2);
     }
 
@@ -295,9 +299,28 @@ export const getGameWinningBoardIndices = (
 
 export const getPlayableBoardIndices = (
   gameBoards: Array<GameBoardState>,
-  playerType: PlayerType
+  playerType: PlayerType,
+  gridSize: number
 ): number[] => {
-  return [];
+  const playableBoardIndices: number[] = [];
+
+  gameBoards.forEach((board, index) => {
+    const opponentPlayer = playerType === "X" ? "O" : "X";
+
+    const availableMoveCount = getEmptyPositions(board, gridSize);
+
+    if (
+      isBoardWon(board, playerType, gridSize) ||
+      isBoardWon(board, opponentPlayer, gridSize) ||
+      !availableMoveCount.length
+    ) {
+      return;
+    }
+
+    playableBoardIndices.push(index);
+  });
+
+  return playableBoardIndices;
 };
 
 /**
@@ -311,7 +334,11 @@ export const getNextMove = (
   gridSize: number,
   numberOfBoards?: number
 ): { [key: number]: number[] } | undefined => {
-  const gameWinningBoards = getGameWinningBoardIndices(gameBoards, playerType);
+  const gameWinningBoards = getGameWinningBoardIndices(
+    gameBoards,
+    playerType,
+    gridSize
+  );
   let indexOfBoardToPlay: number | undefined;
 
   if (gameWinningBoards.length) {
@@ -339,7 +366,8 @@ export const getNextMove = (
   if (!indexOfBoardToPlay) {
     const playableBoardIndices = getPlayableBoardIndices(
       gameBoards,
-      playerType
+      playerType,
+      gridSize
     );
     if (playableBoardIndices.length) {
       indexOfBoardToPlay =
@@ -355,9 +383,9 @@ export const getNextMove = (
       : undefined;
 
   if (boardToPlay && indexOfBoardToPlay !== undefined) {
-    const move = getNonStaleMoveOnBoard(boardToPlay, playerType, gridSize);
+    const move = getOptimalMoveOnBoard(boardToPlay, playerType, gridSize);
     if (move) {
-      const boardWithMove = { indexOfBoardToPlay: move };
+      const boardWithMove = { [indexOfBoardToPlay]: move };
       return boardWithMove;
     }
   }
