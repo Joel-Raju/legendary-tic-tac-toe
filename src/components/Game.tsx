@@ -1,15 +1,19 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 import reducer, {
   State as AppState,
   InitialState as AppInitialState,
   Action as AppAction
-} from '../store/gameReducer';
-import GameBoard from './GameBoard';
-import { PlayerType } from '../common/types';
-import { isBoardWon, getInitialGameState } from '../common/gameplayUtils';
-import Button from './Button';
-import { ActionTypes } from '../store/actionTypes';
+} from "../store/gameReducer";
+import GameBoard from "./GameBoard";
+import { PlayerType } from "../common/types";
+import {
+  isBoardWon,
+  getInitialGameState,
+  getNextMove
+} from "../common/gameplayUtils";
+import Button from "./Button";
+import { ActionTypes } from "../store/actionTypes";
 
 const StyledGame = styled.div`
   border-radius: 3px;
@@ -20,17 +24,14 @@ const StyledGame = styled.div`
   }
 `;
 
-const BOARD_COUNT = 9;
-const GRID_SIZE = 3;
-
 const Game: React.FC = () => {
-  const [gameState, setGameState] = React.useState(
-    getInitialGameState(BOARD_COUNT, GRID_SIZE)
-  );
-
   const [appState, dispatch] = React.useReducer<
     React.Reducer<AppState, AppAction>
   >(reducer, AppInitialState);
+
+  const [gameState, setGameState] = React.useState(
+    getInitialGameState(appState.boardCount, appState.gridSize)
+  );
 
   const makeMove = (
     boardIndex: number,
@@ -47,9 +48,34 @@ const Game: React.FC = () => {
     ]);
   };
 
+  const onPlayerMove = (
+    boardIndex: number,
+    row: number,
+    col: number,
+    playerType: PlayerType
+  ) => {
+    makeMove(boardIndex, row, col, playerType);
+
+    const opponentMove = getNextMove(
+      gameState,
+      appState.botType,
+      appState.gridSize,
+      appState.boardCount
+    );
+
+    console.log("opponentMove ===", opponentMove);
+
+    if (opponentMove) {
+      const keys = Object.keys(opponentMove);
+      const bIndex = parseInt(keys[0], 10);
+      const [rowIdx, colIdx] = opponentMove[bIndex];
+      makeMove(bIndex, rowIdx, colIdx, appState.botType);
+    }
+  };
+
   const isGameBoardWon = (boardIndex: number) => {
     const boardState = gameState[boardIndex];
-    return !!isBoardWon(boardState);
+    return !!isBoardWon(boardState, appState.playerType);
   };
 
   const isGameWon = () => {
@@ -66,7 +92,7 @@ const Game: React.FC = () => {
   };
 
   const startNewGame = () => {
-    setGameState(getInitialGameState(BOARD_COUNT, GRID_SIZE));
+    setGameState(getInitialGameState(appState.boardCount, appState.gridSize));
     dispatch({ type: ActionTypes.INCREMENT_NUM_OF_GAMES });
   };
 
@@ -87,7 +113,7 @@ const Game: React.FC = () => {
               isWon={isGameBoardWon(bIndex)}
               onClick={
                 (bRow, bCol) =>
-                  makeMove(bIndex, bRow, bCol, appState.playerType)
+                  onPlayerMove(bIndex, bRow, bCol, appState.playerType)
                 // eslint-disable-next-line react/jsx-curly-newline
               }
             />
@@ -96,7 +122,7 @@ const Game: React.FC = () => {
         })(boardIndex);
       }
       gameBoards.push(
-        <div className='row' key={row}>
+        <div className="row" key={row}>
           {rowBoards}
         </div>
       );
@@ -110,7 +136,7 @@ const Game: React.FC = () => {
       <div>
         <Button onClick={startNewGame}>New Game</Button>
         Is game won:
-        {isGameWon() ? 'true' : 'false'}
+        {isGameWon() ? "true" : "false"}
       </div>
       {renderGameBoards()}
     </StyledGame>

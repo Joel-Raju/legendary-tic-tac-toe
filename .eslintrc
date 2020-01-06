@@ -65,6 +65,10 @@
      */
     "react-hooks/rules-of-hooks": "error",
 
+    "jsx-quotes": ["error", "prefer-single"],
+
+    "quotes": ["error", "single"],
+
     /**
      * @description rules of eslint-plugin-prettier
      */

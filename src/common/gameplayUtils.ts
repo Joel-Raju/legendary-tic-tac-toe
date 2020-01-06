@@ -1,5 +1,8 @@
 import { GameBoardState, PlayerType } from "./types";
 
+const getRandomInt = (max: number) =>
+  Math.floor(Math.random() * Math.floor(max));
+
 export const getWinConfigs = (
   gridSize: number
 ): Array<Array<Array<number>>> => {
@@ -36,10 +39,11 @@ export const getWinConfigs = (
  */
 
 export const isBoardWon = (
-  gameState: GameBoardState
-): Array<Array<number>> | false => {
+  gameState: GameBoardState,
+  playerType: PlayerType
+): Array<Array<number>> | undefined => {
   if (
-    gameState[0][0] &&
+    playerType === gameState[0][0] &&
     gameState[0][0] === gameState[0][1] &&
     gameState[0][1] === gameState[0][2]
   ) {
@@ -51,7 +55,7 @@ export const isBoardWon = (
   }
 
   if (
-    gameState[1][0] &&
+    playerType === gameState[1][0] &&
     gameState[1][0] === gameState[1][1] &&
     gameState[1][1] === gameState[1][2]
   ) {
@@ -63,7 +67,7 @@ export const isBoardWon = (
   }
 
   if (
-    gameState[2][0] &&
+    playerType === gameState[2][0] &&
     gameState[2][0] === gameState[2][1] &&
     gameState[2][1] === gameState[2][2]
   ) {
@@ -75,7 +79,7 @@ export const isBoardWon = (
   }
 
   if (
-    gameState[0][0] &&
+    playerType === gameState[0][0] &&
     gameState[0][0] === gameState[1][0] &&
     gameState[1][0] === gameState[2][0]
   ) {
@@ -87,7 +91,7 @@ export const isBoardWon = (
   }
 
   if (
-    gameState[0][1] &&
+    playerType === gameState[0][1] &&
     gameState[0][1] === gameState[1][1] &&
     gameState[1][1] === gameState[2][1]
   ) {
@@ -99,7 +103,7 @@ export const isBoardWon = (
   }
 
   if (
-    gameState[0][2] &&
+    playerType === gameState[0][2] &&
     gameState[0][2] === gameState[1][2] &&
     gameState[1][2] === gameState[2][2]
   ) {
@@ -111,7 +115,7 @@ export const isBoardWon = (
   }
 
   if (
-    gameState[0][0] &&
+    playerType === gameState[0][0] &&
     gameState[0][0] === gameState[1][1] &&
     gameState[1][1] === gameState[2][2]
   ) {
@@ -123,7 +127,7 @@ export const isBoardWon = (
   }
 
   if (
-    gameState[0][2] &&
+    playerType === gameState[0][2] &&
     gameState[0][2] === gameState[1][1] &&
     gameState[1][1] === gameState[2][0]
   ) {
@@ -134,7 +138,7 @@ export const isBoardWon = (
     ];
   }
 
-  return false;
+  return undefined;
 };
 
 export const isGameWon = (
@@ -207,24 +211,156 @@ export const getWinningMove = (
   return winningMove.length ? winningMove : undefined;
 };
 
-export const getWinningBoards = (
+export const getNonStaleMoveOnBoard = (
+  gamestate: GameBoardState,
+  playerType: PlayerType,
+  gridSize: number
+): number[] | undefined => {
+  let isMoveLeft = false;
+
+  for (let x = 0; x < gridSize; x += 1) {
+    for (let y = 0; y < gridSize; y += 1) {
+      if (!!gamestate[x][y] && !isMoveLeft) {
+        isMoveLeft = true;
+      }
+    }
+  }
+  return [];
+};
+
+export const getWinningBoardIndices = (
   gameBoards: Array<GameBoardState>,
   playerType: PlayerType,
   gridSize: number
 ) => {
-  const winningBoards: { [key: number]: GameBoardState } = [];
+  const winningBoardIndices: number[] = [];
 
   gameBoards.forEach((board, index) => {
-    if (!isBoardWon(board)) {
+    if (!isBoardWon(board, playerType)) {
       const winningMove = getWinningMove(board, playerType, gridSize);
       if (winningMove) {
-        winningBoards[index] = board;
+        winningBoardIndices.push(index);
       }
     }
   });
-  return winningBoards;
+  return winningBoardIndices;
 };
 
-export const getGameWinningBoard = (gameBoards: Array<GameBoardState>) => {};
+export const getGameWinningBoardIndices = (
+  gameBoards: Array<GameBoardState>,
+  playerType: PlayerType
+): number[] => {
+  const gameWinningBoards: number[] = [];
 
-export const getBoardToPlay = () => {};
+  const winningConfigs = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 4, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [2, 4, 6]
+  ];
+
+  winningConfigs.map(config => {
+    const [pos1, pos2, pos3] = config;
+    const b1 = gameBoards[pos1];
+    const b2 = gameBoards[pos2];
+    const b3 = gameBoards[pos3];
+
+    const opponentPlayer: PlayerType = playerType === "X" ? "O" : "X";
+
+    const isB1Won = !!isBoardWon(b1, playerType);
+    const isB2Won = !!isBoardWon(b2, playerType);
+    const isB3Won = !!isBoardWon(b3, playerType);
+
+    if (isB1Won && isB2Won && !!isBoardWon(b3, opponentPlayer)) {
+      gameWinningBoards.push(pos3);
+    }
+
+    if (isB2Won && isB3Won && !!isBoardWon(b1, opponentPlayer)) {
+      gameWinningBoards.push(pos1);
+    }
+
+    if (isB1Won && isB3Won && !!isBoardWon(b2, opponentPlayer)) {
+      gameWinningBoards.push(pos2);
+    }
+
+    return config;
+  });
+
+  return gameWinningBoards;
+};
+
+export const getPlayableBoardIndices = (
+  gameBoards: Array<GameBoardState>,
+  playerType: PlayerType
+): number[] => {
+  return [];
+};
+
+/**
+ * Returns the coordinates of next move to make on a board
+ * @param gameBoards
+ * @param playerType
+ */
+export const getNextMove = (
+  gameBoards: Array<GameBoardState>,
+  playerType: PlayerType,
+  gridSize: number,
+  numberOfBoards?: number
+): { [key: number]: number[] } | undefined => {
+  const gameWinningBoards = getGameWinningBoardIndices(gameBoards, playerType);
+  let indexOfBoardToPlay: number | undefined;
+
+  if (gameWinningBoards.length) {
+    indexOfBoardToPlay =
+      gameWinningBoards.length > 1
+        ? getRandomInt(gameWinningBoards.length)
+        : gameWinningBoards[0];
+  }
+
+  if (!indexOfBoardToPlay) {
+    const winningBoards = getWinningBoardIndices(
+      gameBoards,
+      playerType,
+      gridSize
+    );
+
+    if (winningBoards.length) {
+      indexOfBoardToPlay =
+        winningBoards.length > 1
+          ? getRandomInt(winningBoards.length)
+          : winningBoards[0];
+    }
+  }
+
+  if (!indexOfBoardToPlay) {
+    const playableBoardIndices = getPlayableBoardIndices(
+      gameBoards,
+      playerType
+    );
+    if (playableBoardIndices.length) {
+      indexOfBoardToPlay =
+        playableBoardIndices.length > 1
+          ? getRandomInt(playableBoardIndices.length)
+          : playableBoardIndices[0];
+    }
+  }
+
+  const boardToPlay =
+    indexOfBoardToPlay !== undefined
+      ? gameBoards[indexOfBoardToPlay]
+      : undefined;
+
+  if (boardToPlay && indexOfBoardToPlay !== undefined) {
+    const move = getNonStaleMoveOnBoard(boardToPlay, playerType, gridSize);
+    if (move) {
+      const boardWithMove = { indexOfBoardToPlay: move };
+      return boardWithMove;
+    }
+  }
+
+  return undefined;
+};
