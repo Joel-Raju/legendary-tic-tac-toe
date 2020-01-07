@@ -8,6 +8,7 @@ import reducer, {
 import GameBoard from "./GameBoard";
 import { PlayerType } from "../common/types";
 import {
+  isGameWon as isGameWonByPlayer,
   isBoardWon,
   getInitialGameState,
   getNextMove
@@ -78,16 +79,23 @@ const Game: React.FC = () => {
   };
 
   const isGameWon = () => {
-    return (
-      (isGameBoardWon(0) && isGameBoardWon(1) && isGameBoardWon(2)) ||
-      (isGameBoardWon(3) && isGameBoardWon(4) && isGameBoardWon(5)) ||
-      (isGameBoardWon(6) && isGameBoardWon(7) && isGameBoardWon(8)) ||
-      (isGameBoardWon(0) && isGameBoardWon(3) && isGameBoardWon(6)) ||
-      (isGameBoardWon(1) && isGameBoardWon(4) && isGameBoardWon(7)) ||
-      (isGameBoardWon(2) && isGameBoardWon(5) && isGameBoardWon(8)) ||
-      (isGameBoardWon(0) && isGameBoardWon(4) && isGameBoardWon(8)) ||
-      (isGameBoardWon(2) && isGameBoardWon(4) && isGameBoardWon(6))
+    const isWonByPlayer = isGameWonByPlayer(
+      gameState,
+      appState.playerType,
+      appState.gridSize
     );
+
+    if (isWonByPlayer) {
+      return true;
+    }
+
+    const isWonByBot = isGameWonByPlayer(
+      gameState,
+      appState.botType,
+      appState.gridSize
+    );
+
+    return isWonByBot;
   };
 
   const startNewGame = () => {

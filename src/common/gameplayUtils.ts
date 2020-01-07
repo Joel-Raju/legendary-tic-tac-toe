@@ -55,21 +55,6 @@ export const isBoardWon = (
     if (
       gameState[x1][y1] === playerType &&
       gameState[x1][y1] === gameState[x2][y2] &&
-      !wonConfig.length
-    ) {
-      wonConfig = [c1, c2, c3];
-    }
-
-    if (
-      gameState[x1][y1] === playerType &&
-      gameState[x1][y1] === gameState[x3][y3] &&
-      !wonConfig.length
-    ) {
-      wonConfig = [c1, c2, c3];
-    }
-
-    if (
-      gameState[x2][y2] === playerType &&
       gameState[x2][y2] === gameState[x3][y3] &&
       !wonConfig.length
     ) {
@@ -103,19 +88,35 @@ export const getEmptyPositions = (
 
 export const isGameWon = (
   gameBoards: Array<GameBoardState>,
-  numberOfBoards: number
+  playerType: PlayerType,
+  gridSize: number
 ) => {
-  // return (
-  //   (isBoardWon(0) && isBoardWon(1) && isBoardWon(2)) ||
-  //   (isBoardWon(3) && isBoardWon(4) && isBoardWon(5)) ||
-  //   (isBoardWon(6) && isBoardWon(7) && isBoardWon(8)) ||
-  //   (isBoardWon(0) && isBoardWon(3) && isBoardWon(6)) ||
-  //   (isBoardWon(1) && isBoardWon(4) && isBoardWon(7)) ||
-  //   (isBoardWon(2) && isBoardWon(5) && isBoardWon(8)) ||
-  //   (isBoardWon(0) && isBoardWon(4) && isBoardWon(8)) ||
-  //   (isBoardWon(2) && isBoardWon(4) && isBoardWon(6))
-  // );
-  return false;
+  return (
+    (isBoardWon(gameBoards[0], playerType, gridSize) &&
+      isBoardWon(gameBoards[1], playerType, gridSize) &&
+      isBoardWon(gameBoards[2], playerType, gridSize)) ||
+    (isBoardWon(gameBoards[3], playerType, gridSize) &&
+      isBoardWon(gameBoards[4], playerType, gridSize) &&
+      isBoardWon(gameBoards[5], playerType, gridSize)) ||
+    (isBoardWon(gameBoards[6], playerType, gridSize) &&
+      isBoardWon(gameBoards[7], playerType, gridSize) &&
+      isBoardWon(gameBoards[8], playerType, gridSize)) ||
+    (isBoardWon(gameBoards[0], playerType, gridSize) &&
+      isBoardWon(gameBoards[3], playerType, gridSize) &&
+      isBoardWon(gameBoards[6], playerType, gridSize)) ||
+    (isBoardWon(gameBoards[1], playerType, gridSize) &&
+      isBoardWon(gameBoards[4], playerType, gridSize) &&
+      isBoardWon(gameBoards[7], playerType, gridSize)) ||
+    (isBoardWon(gameBoards[2], playerType, gridSize) &&
+      isBoardWon(gameBoards[5], playerType, gridSize) &&
+      isBoardWon(gameBoards[8], playerType, gridSize)) ||
+    (isBoardWon(gameBoards[0], playerType, gridSize) &&
+      isBoardWon(gameBoards[4], playerType, gridSize) &&
+      isBoardWon(gameBoards[8], playerType, gridSize)) ||
+    (isBoardWon(gameBoards[2], playerType, gridSize) &&
+      isBoardWon(gameBoards[4], playerType, gridSize) &&
+      isBoardWon(gameBoards[6], playerType, gridSize))
+  );
 };
 
 export const getInitialGameState = (boardCount: number, gridSize: number) => {
@@ -268,7 +269,7 @@ export const getGameWinningBoardIndices = (
       isB1Won &&
       isB2Won &&
       movesOnB3.length &&
-      !!isBoardWon(b3, opponentPlayer, gridSize)
+      !isBoardWon(b3, opponentPlayer, gridSize)
     ) {
       gameWinningBoards.push(pos3);
     }
@@ -277,7 +278,7 @@ export const getGameWinningBoardIndices = (
       isB2Won &&
       isB3Won &&
       movesOnB1.length &&
-      !!isBoardWon(b1, opponentPlayer, gridSize)
+      !isBoardWon(b1, opponentPlayer, gridSize)
     ) {
       gameWinningBoards.push(pos1);
     }
@@ -286,7 +287,7 @@ export const getGameWinningBoardIndices = (
       isB1Won &&
       isB3Won &&
       movesOnB2.length &&
-      !!isBoardWon(b2, opponentPlayer, gridSize)
+      !isBoardWon(b2, opponentPlayer, gridSize)
     ) {
       gameWinningBoards.push(pos2);
     }
@@ -310,14 +311,12 @@ export const getPlayableBoardIndices = (
     const availableMoveCount = getEmptyPositions(board, gridSize);
 
     if (
-      isBoardWon(board, playerType, gridSize) ||
-      isBoardWon(board, opponentPlayer, gridSize) ||
-      !availableMoveCount.length
+      !isBoardWon(board, playerType, gridSize) &&
+      !isBoardWon(board, opponentPlayer, gridSize) &&
+      availableMoveCount.length
     ) {
-      return;
+      playableBoardIndices.push(index);
     }
-
-    playableBoardIndices.push(index);
   });
 
   return playableBoardIndices;
@@ -334,21 +333,57 @@ export const getNextMove = (
   gridSize: number,
   numberOfBoards?: number
 ): { [key: number]: number[] } | undefined => {
+  const opponentPlayer = playerType === "X" ? "O" : "X";
+
   const gameWinningBoards = getGameWinningBoardIndices(
     gameBoards,
     playerType,
     gridSize
   );
+
   let indexOfBoardToPlay: number | undefined;
 
   if (gameWinningBoards.length) {
     indexOfBoardToPlay =
       gameWinningBoards.length > 1
-        ? getRandomInt(gameWinningBoards.length)
+        ? gameWinningBoards[getRandomInt(gameWinningBoards.length)]
         : gameWinningBoards[0];
   }
 
-  if (!indexOfBoardToPlay) {
+  /**
+   * Check if opponent has a winning move and play it
+   */
+
+  if (indexOfBoardToPlay === undefined) {
+    const opponentWinningBoards = getGameWinningBoardIndices(
+      gameBoards,
+      opponentPlayer,
+      gridSize
+    );
+
+    if (opponentWinningBoards.length) {
+      indexOfBoardToPlay =
+        opponentWinningBoards.length > 1
+          ? opponentWinningBoards[getRandomInt(opponentWinningBoards.length)]
+          : opponentWinningBoards[0];
+    }
+
+    if (indexOfBoardToPlay !== undefined) {
+      const board = gameBoards[indexOfBoardToPlay];
+      const winningMove = getWinningMoveOnBoard(
+        board,
+        opponentPlayer,
+        gridSize
+      );
+      if (winningMove && winningMove.length) {
+        return {
+          [indexOfBoardToPlay]: winningMove
+        };
+      }
+    }
+  }
+
+  if (indexOfBoardToPlay === undefined) {
     const winningBoards = getWinningBoardIndices(
       gameBoards,
       playerType,
@@ -358,21 +393,22 @@ export const getNextMove = (
     if (winningBoards.length) {
       indexOfBoardToPlay =
         winningBoards.length > 1
-          ? getRandomInt(winningBoards.length)
+          ? winningBoards[getRandomInt(winningBoards.length)]
           : winningBoards[0];
     }
   }
 
-  if (!indexOfBoardToPlay) {
+  if (indexOfBoardToPlay === undefined) {
     const playableBoardIndices = getPlayableBoardIndices(
       gameBoards,
       playerType,
       gridSize
     );
+
     if (playableBoardIndices.length) {
       indexOfBoardToPlay =
         playableBoardIndices.length > 1
-          ? getRandomInt(playableBoardIndices.length)
+          ? playableBoardIndices[getRandomInt(playableBoardIndices.length)]
           : playableBoardIndices[0];
     }
   }
