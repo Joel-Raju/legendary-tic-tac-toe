@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const Button = styled.button`
   appearance: none;
@@ -14,6 +14,8 @@ const Button = styled.button`
   height: 40px;
   line-height: 42px;
   cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: bold;
 `;
 
 export default Button;

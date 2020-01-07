@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import { PlayerType } from '../common/types';
+import React from "react";
+import styled from "styled-components";
+import { PlayerType } from "../common/types";
 
 enum CellType {
   EMPTY,
@@ -38,6 +38,7 @@ const StyledCell = styled.div<{ type: CellType }>`
     text-align: center;
     font-weight: bold;
     fontsize: 3rem;
+    align-self: center;
     color: ${props => (props.type === CellType.BOT ? `#ffffff` : `#776e65`)};
   }
 `;
@@ -62,7 +63,7 @@ const GridCell: React.FC<Props> = ({ playerType, value, onClick }) => {
 
   return (
     <StyledCell onClick={() => onClick()} type={getCellType()}>
-      <div className='inner-value'>{value}</div>
+      <div className="inner-value">{value}</div>
     </StyledCell>
   );
 };
