@@ -35,7 +35,7 @@ export const getWinConfigs = (
 /**
  * If won returns the winning row / col / diagoal indices or else undefined
  * @param gameState Game State of a board
- * @returns
+ * @returns  Array<Array<number>> | undefined
  */
 
 export const isBoardWon = (
@@ -121,6 +121,7 @@ export const isGameWon = (
 
 export const getInitialGameState = (boardCount: number, gridSize: number) => {
   const initialState = new Array(boardCount);
+
   for (let board = 0; board < boardCount; board += 1) {
     const rowCount = gridSize;
     const gameGrid = new Array(3);
