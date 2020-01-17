@@ -34,12 +34,37 @@ const PlayArea: React.FC = () => {
     getInitialGameState(appState.boardCount, appState.gridSize)
   );
 
+  const isGameWon = () => {
+    const isWonByPlayer = isGameWonByPlayer(
+      gameState,
+      appState.playerType,
+      appState.gridSize
+    );
+
+    if (isWonByPlayer) {
+      return true;
+    }
+
+    const isWonByBot = isGameWonByPlayer(
+      gameState,
+      appState.botType,
+      appState.gridSize
+    );
+
+    return isWonByBot;
+  };
+
   const makeMove = (
     boardIndex: number,
     row: number,
     col: number,
     value: PlayerType
   ) => {
+    const isGameEnded = isGameWon();
+    if (isGameEnded) {
+      return;
+    }
+
     const boardState = gameState[boardIndex].slice();
     boardState[row][col] = value;
     setGameState(prevState => [
@@ -76,26 +101,6 @@ const PlayArea: React.FC = () => {
   const isGameBoardWon = (boardIndex: number) => {
     const boardState = gameState[boardIndex];
     return !!isBoardWon(boardState, appState.playerType, appState.gridSize);
-  };
-
-  const isGameWon = () => {
-    const isWonByPlayer = isGameWonByPlayer(
-      gameState,
-      appState.playerType,
-      appState.gridSize
-    );
-
-    if (isWonByPlayer) {
-      return true;
-    }
-
-    const isWonByBot = isGameWonByPlayer(
-      gameState,
-      appState.botType,
-      appState.gridSize
-    );
-
-    return isWonByBot;
   };
 
   const startNewGame = () => {
