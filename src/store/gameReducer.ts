@@ -1,6 +1,6 @@
-import React from "react";
-import { ActionTypes } from "./actionTypes";
-import { PlayerType } from "../common/types";
+import React from 'react';
+import { ActionTypes } from './actionTypes';
+import { PlayerType } from '../common/types';
 
 const BOARD_COUNT = 9;
 const GRID_SIZE = 3;
@@ -15,9 +15,9 @@ export interface State {
 }
 
 export const InitialState: State = {
-  botType: "O",
+  botType: 'O',
   numOfGames: 0,
-  playerType: "X",
+  playerType: 'X',
   winTimes: 0,
   boardCount: BOARD_COUNT,
   gridSize: GRID_SIZE
@@ -36,7 +36,7 @@ const reducer: React.Reducer<State, Action> = (state: State, action) => {
       return {
         ...state,
         playerType: payload,
-        botType: payload === "X" ? "O" : "X"
+        botType: payload === 'X' ? 'O' : 'X'
       };
 
     case ActionTypes.INCREMENT_SCORE:

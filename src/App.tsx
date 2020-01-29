@@ -1,10 +1,10 @@
-import React from "react";
-import "./App.css";
-import Game from "./components/Game";
+import React from 'react';
+import './App.css';
+import Game from './components/Game';
 
 const App: React.FC = () => {
   return (
-    <div className="App">
+    <div className='App'>
       <Game />
     </div>
   );

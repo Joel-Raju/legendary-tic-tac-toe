@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import PlayArea from "./PlayArea";
-import HowTo from "./HowTo";
+import React from 'react';
+import styled from 'styled-components';
+import PlayArea from './PlayArea';
+import HowTo from './HowTo';
 
 const StyledGame = styled.div`
   display: flex;
@@ -23,10 +23,10 @@ const StyledGame = styled.div`
 
 const Game: React.FC = () => (
   <StyledGame>
-    <div className="game-controls">
+    <div className='game-controls'>
       <HowTo />
     </div>
-    <div className="playarea">
+    <div className='playarea'>
       <PlayArea />
     </div>
   </StyledGame>

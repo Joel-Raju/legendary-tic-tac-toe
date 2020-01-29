@@ -1,20 +1,20 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 import reducer, {
   State as AppState,
   InitialState as AppInitialState,
   Action as AppAction
-} from "../store/gameReducer";
-import GameBoard from "./GameBoard";
-import { PlayerType } from "../common/types";
+} from '../store/gameReducer';
+import GameBoard from './GameBoard';
+import { PlayerType } from '../common/types';
 import {
   isGameWon as isGameWonByPlayer,
   isBoardWon,
   getInitialGameState,
   getNextMove
-} from "../common/gameplayUtils";
-import Button from "./Button";
-import { ActionTypes } from "../store/actionTypes";
+} from '../common/gameplayUtils';
+import Button from './Button';
+import { ActionTypes } from '../store/actionTypes';
 
 const StyledGame = styled.div`
   border-radius: 3px;
@@ -134,7 +134,7 @@ const PlayArea: React.FC = () => {
         })(boardIndex);
       }
       gameBoards.push(
-        <div className="row" key={row}>
+        <div className='row' key={row}>
           {rowBoards}
         </div>
       );
@@ -148,7 +148,7 @@ const PlayArea: React.FC = () => {
       <div>
         <Button onClick={startNewGame}>New Game</Button>
         Is game won:
-        {isGameWon() ? "true" : "false"}
+        {isGameWon() ? 'true' : 'false'}
       </div>
       {renderGameBoards()}
     </StyledGame>

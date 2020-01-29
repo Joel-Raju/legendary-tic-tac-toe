@@ -1,4 +1,4 @@
-import { GameBoardState, PlayerType } from "./types";
+import { GameBoardState, PlayerType } from './types';
 
 const getRandomInt = (max: number) =>
   Math.floor(Math.random() * Math.floor(max));
@@ -184,7 +184,7 @@ export const getOptimalMoveOnBoard = (
   playerType: PlayerType,
   gridSize: number
 ): number[] => {
-  const opponentPlayer: PlayerType = playerType === "X" ? "O" : "X";
+  const opponentPlayer: PlayerType = playerType === 'X' ? 'O' : 'X';
 
   let optimalMove = getWinningMoveOnBoard(gameState, playerType, gridSize);
 
@@ -211,7 +211,7 @@ export const getWinningBoardIndices = (
 ) => {
   const winningBoardIndices: number[] = [];
 
-  const opponentPlayer: PlayerType = playerType === "X" ? "O" : "X";
+  const opponentPlayer: PlayerType = playerType === 'X' ? 'O' : 'X';
 
   gameBoards.forEach((board, index) => {
     const availableMoveCount = getEmptyPositions(board, gridSize);
@@ -256,7 +256,7 @@ export const getGameWinningBoardIndices = (
     const b2 = gameBoards[pos2];
     const b3 = gameBoards[pos3];
 
-    const opponentPlayer: PlayerType = playerType === "X" ? "O" : "X";
+    const opponentPlayer: PlayerType = playerType === 'X' ? 'O' : 'X';
 
     const isB1Won = !!isBoardWon(b1, playerType, gridSize);
     const isB2Won = !!isBoardWon(b2, playerType, gridSize);
@@ -307,7 +307,7 @@ export const getPlayableBoardIndices = (
   const playableBoardIndices: number[] = [];
 
   gameBoards.forEach((board, index) => {
-    const opponentPlayer = playerType === "X" ? "O" : "X";
+    const opponentPlayer = playerType === 'X' ? 'O' : 'X';
 
     const availableMoveCount = getEmptyPositions(board, gridSize);
 
@@ -334,7 +334,7 @@ export const getNextMove = (
   gridSize: number,
   numberOfBoards?: number
 ): { [key: number]: number[] } | undefined => {
-  const opponentPlayer = playerType === "X" ? "O" : "X";
+  const opponentPlayer = playerType === 'X' ? 'O' : 'X';
 
   const gameWinningBoards = getGameWinningBoardIndices(
     gameBoards,

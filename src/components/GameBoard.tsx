@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import GridCell from "./GridCell";
-import { PlayerType } from "../common/types";
+import React from 'react';
+import styled from 'styled-components';
+import GridCell from './GridCell';
+import { PlayerType } from '../common/types';
 
 const StyledBoard = styled.div`
   display: inline-block;
@@ -58,7 +58,7 @@ const GameBoard: React.FC<Props> = ({
         );
       }
       grid.push(
-        <div className="grid-row" key={row}>
+        <div className='grid-row' key={row}>
           {cells}
         </div>
       );

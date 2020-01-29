@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Button from "./Button";
+import React from 'react';
+import styled from 'styled-components';
+import Button from './Button';
 
 const HowToContainer = styled.div`
   display: flex;
@@ -29,9 +29,9 @@ const HowToContainer = styled.div`
 
 const HowTo: React.FC = () => (
   <HowToContainer>
-    <h1 className="game-title">Legendary Tic Tac Toe</h1>
+    <h1 className='game-title'>Legendary Tic Tac Toe</h1>
     <div>
-      <h3 className="subtitle">How to Play</h3>
+      <h3 className='subtitle'>How to Play</h3>
       <ul>
         <li>There are 9 mini game boards.</li>
         <li>

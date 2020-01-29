@@ -8,11 +8,11 @@ import {
   getOptimalMoveOnBoard,
   getWinningBoardIndices,
   getGameWinningBoardIndices
-} from "../gameplayUtils";
-import { PlayerType, GameBoardState } from "../types";
+} from '../gameplayUtils';
+import { PlayerType, GameBoardState } from '../types';
 
-describe("gameplayUtils", () => {
-  it("gets Win Configs", () => {
+describe('gameplayUtils', () => {
+  it('gets Win Configs', () => {
     expect(getWinConfigs(3)).toEqual([
       [
         [0, 0],
@@ -57,19 +57,19 @@ describe("gameplayUtils", () => {
     ]);
   });
 
-  it("checks is Board Won", () => {
+  it('checks is Board Won', () => {
     const valsArr = new Array(3).fill(undefined);
     const emptyArray = [valsArr, valsArr, valsArr];
 
-    expect(isBoardWon(emptyArray, "X", 3)).toEqual(undefined);
+    expect(isBoardWon(emptyArray, 'X', 3)).toEqual(undefined);
     expect(
       isBoardWon(
         [
-          ["O", "X", "X"],
-          ["X", "O", "O"],
-          ["X", "X", "O"]
+          ['O', 'X', 'X'],
+          ['X', 'O', 'O'],
+          ['X', 'X', 'O']
         ],
-        "O",
+        'O',
         3
       )
     ).toEqual([
@@ -80,23 +80,23 @@ describe("gameplayUtils", () => {
     expect(
       isBoardWon(
         [
-          ["X", "X", "O"],
-          ["O", "O", "X"],
-          ["X", "O", "X"]
+          ['X', 'X', 'O'],
+          ['O', 'O', 'X'],
+          ['X', 'O', 'X']
         ],
-        "X",
+        'X',
         3
       )
     ).toEqual(undefined);
   });
 
-  it("gets empty board positions", () => {
+  it('gets empty board positions', () => {
     expect(
       getEmptyPositions(
         [
-          ["O", "X", "X"],
-          ["X", "O", "O"],
-          ["X", "X", "O"]
+          ['O', 'X', 'X'],
+          ['X', 'O', 'O'],
+          ['X', 'X', 'O']
         ],
         3
       )
@@ -105,9 +105,9 @@ describe("gameplayUtils", () => {
     expect(
       getEmptyPositions(
         [
-          ["O", "X", undefined],
-          ["X", undefined, "O"],
-          ["X", "X", "O"]
+          ['O', 'X', undefined],
+          ['X', undefined, 'O'],
+          ['X', 'X', 'O']
         ],
         3
       )
@@ -117,17 +117,17 @@ describe("gameplayUtils", () => {
     ]);
   });
 
-  it("checks if game is won", () => {
+  it('checks if game is won', () => {
     const gameWonBoard: GameBoardState = [
-      ["O", "X", "X"],
-      ["X", "O", "O"],
-      ["X", "X", "O"]
+      ['O', 'X', 'X'],
+      ['X', 'O', 'O'],
+      ['X', 'X', 'O']
     ];
 
     const gameLoseBoard: GameBoardState = [
-      ["O", "X", "X"],
-      ["X", "O", "O"],
-      ["X", "O", "X"]
+      ['O', 'X', 'X'],
+      ['X', 'O', 'O'],
+      ['X', 'O', 'X']
     ];
 
     const gameWonConfig: GameBoardState[] = [
@@ -154,12 +154,12 @@ describe("gameplayUtils", () => {
       gameLoseBoard
     ];
 
-    expect(isGameWon(gameWonConfig, "O", 3)).toEqual([0, 1, 2]);
+    expect(isGameWon(gameWonConfig, 'O', 3)).toEqual([0, 1, 2]);
 
-    expect(isGameWon(gameLoseConfig, "O", 3)).toEqual(false);
+    expect(isGameWon(gameLoseConfig, 'O', 3)).toEqual(false);
   });
 
-  it("gets initial game state", () => {
+  it('gets initial game state', () => {
     const boardCount = 9;
     const gridSize = 3;
 
@@ -171,20 +171,20 @@ describe("gameplayUtils", () => {
     expect(getInitialGameState(boardCount, gridSize)).toEqual(gameState);
   });
 
-  it("get winning move On Board", () => {
+  it('get winning move On Board', () => {
     const winPossibleBoard: GameBoardState = [
-      ["O", "X", undefined],
-      ["O", undefined, "X"],
-      ["X", "X", "O"]
+      ['O', 'X', undefined],
+      ['O', undefined, 'X'],
+      ['X', 'X', 'O']
     ];
 
     const winImpossibleBoard: GameBoardState = [
-      ["O", "X", undefined],
-      ["O", undefined, "X"],
-      ["X", "O", "X"]
+      ['O', 'X', undefined],
+      ['O', undefined, 'X'],
+      ['X', 'O', 'X']
     ];
 
-    const playerType: PlayerType = "O";
+    const playerType: PlayerType = 'O';
     const gridSize = 3;
 
     expect(
@@ -196,20 +196,20 @@ describe("gameplayUtils", () => {
     ).toEqual(undefined);
   });
 
-  it("get optimal move on board", () => {
+  it('get optimal move on board', () => {
     const winPossibleBoard: GameBoardState = [
-      ["O", "X", undefined],
-      ["O", undefined, "X"],
-      ["X", "X", "O"]
+      ['O', 'X', undefined],
+      ['O', undefined, 'X'],
+      ['X', 'X', 'O']
     ];
 
-    const playerType: PlayerType = "O";
+    const playerType: PlayerType = 'O';
     const gridSize = 3;
 
     const opponentWinBoard: GameBoardState = [
-      ["X", "X", "O"],
-      ["O", undefined, undefined],
-      ["X", "O", "X"]
+      ['X', 'X', 'O'],
+      ['O', undefined, undefined],
+      ['X', 'O', 'X']
     ];
 
     expect(
@@ -221,23 +221,23 @@ describe("gameplayUtils", () => {
     ).toEqual([1, 1]);
   });
 
-  it("get winning board indices", () => {
+  it('get winning board indices', () => {
     const gameWonBoard: GameBoardState = [
-      ["O", "X", "X"],
-      ["X", "O", "O"],
-      ["X", "X", "O"]
+      ['O', 'X', 'X'],
+      ['X', 'O', 'O'],
+      ['X', 'X', 'O']
     ];
 
     const winPossibleBoard: GameBoardState = [
-      ["O", "X", undefined],
-      ["O", undefined, "X"],
-      ["X", "X", "O"]
+      ['O', 'X', undefined],
+      ['O', undefined, 'X'],
+      ['X', 'X', 'O']
     ];
 
     const gameLoseBoard: GameBoardState = [
-      ["O", "X", "X"],
-      ["X", "O", "O"],
-      ["X", "O", "X"]
+      ['O', 'X', 'X'],
+      ['X', 'O', 'O'],
+      ['X', 'O', 'X']
     ];
 
     const gameState: GameBoardState[] = [
@@ -252,26 +252,26 @@ describe("gameplayUtils", () => {
       winPossibleBoard
     ];
 
-    expect(getWinningBoardIndices(gameState, "O", 3)).toEqual([1, 8]);
+    expect(getWinningBoardIndices(gameState, 'O', 3)).toEqual([1, 8]);
   });
 
-  it("get game winning board indices", () => {
+  it('get game winning board indices', () => {
     const gameWonBoard: GameBoardState = [
-      ["O", "X", "X"],
-      ["X", "O", "O"],
-      ["X", "X", "O"]
+      ['O', 'X', 'X'],
+      ['X', 'O', 'O'],
+      ['X', 'X', 'O']
     ];
 
     const winPossibleBoard: GameBoardState = [
-      ["O", "X", undefined],
-      ["O", undefined, "X"],
-      ["X", "X", "O"]
+      ['O', 'X', undefined],
+      ['O', undefined, 'X'],
+      ['X', 'X', 'O']
     ];
 
     const gameLoseBoard: GameBoardState = [
-      ["O", "X", "X"],
-      ["X", "O", "O"],
-      ["X", "O", "X"]
+      ['O', 'X', 'X'],
+      ['X', 'O', 'O'],
+      ['X', 'O', 'X']
     ];
 
     const gameState: GameBoardState[] = [
@@ -286,8 +286,8 @@ describe("gameplayUtils", () => {
       gameLoseBoard
     ];
 
-    expect(getGameWinningBoardIndices(gameState, "O", 3)).toEqual([1]);
+    expect(getGameWinningBoardIndices(gameState, 'O', 3)).toEqual([1]);
   });
 
-  it("get playable board indices", () => {});
+  it('get playable board indices', () => {});
 });
