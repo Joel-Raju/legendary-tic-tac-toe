@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import GridCell from './GridCell';
-import { PlayerType } from '../common/types';
+import { PlayerType, GameBoardState } from '../common/types';
 
 const StyledBoard = styled.div`
-  display: inline-block;
   background: #bbada0;
   padding: 15px;
   width: 180px;
@@ -24,7 +23,7 @@ const StyledBoard = styled.div`
 
 interface Props {
   playerType: PlayerType;
-  gameState: [];
+  gameState: GameBoardState;
   isWon: boolean;
   onClick: (row: number, col: number) => any;
 }

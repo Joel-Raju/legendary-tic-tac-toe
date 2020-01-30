@@ -119,7 +119,10 @@ export const isGameWon = (
   );
 };
 
-export const getInitialGameState = (boardCount: number, gridSize: number) => {
+export const getInitialGameState = (
+  boardCount: number,
+  gridSize: number
+): Array<GameBoardState> => {
   const initialState = new Array(boardCount);
 
   for (let board = 0; board < boardCount; board += 1) {
@@ -428,4 +431,40 @@ export const getNextMove = (
   }
 
   return undefined;
+};
+
+export const isGameStarted = (
+  gameBoards: Array<GameBoardState>,
+  gridSize: number
+): boolean => {
+  let isStarted = false;
+  gameBoards.forEach(board => {
+    for (let i = 0; i < gridSize; i += 1) {
+      for (let j = 0; j < gridSize; j += 1) {
+        if (board[i][j] === 'X' || board[i][j] === 'O') {
+          isStarted = true;
+        }
+      }
+    }
+  });
+
+  return isStarted;
+};
+
+export const isMoveLeftInGame = (
+  gameBoards: Array<GameBoardState>,
+  gridSize: number
+): boolean => {
+  let isMoveLeft = false;
+  gameBoards.forEach(board => {
+    for (let i = 0; i < gridSize; i += 1) {
+      for (let j = 0; j < gridSize; j += 1) {
+        if (!board[i][j]) {
+          isMoveLeft = true;
+        }
+      }
+    }
+  });
+
+  return isMoveLeft;
 };

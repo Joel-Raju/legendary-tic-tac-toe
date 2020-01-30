@@ -37,7 +37,6 @@ const StyledCell = styled.div<{ type: CellType }>`
     font-size: 2.5rem;
     text-align: center;
     font-weight: bold;
-    fontsize: 3rem;
     align-self: center;
     color: ${props => (props.type === CellType.BOT ? '#ffffff' : '#776e65')};
   }

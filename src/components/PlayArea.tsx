@@ -1,57 +1,60 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
-import reducer, {
-  State as AppState,
-  InitialState as AppInitialState,
-  Action as AppAction
-} from '../store/gameReducer';
+import { GlobalStoreContext } from '../context/globalReducer';
 import GameBoard from './GameBoard';
-import { PlayerType } from '../common/types';
+import { PlayerType, GameplayState } from '../common/types';
 import {
   isGameWon as isGameWonByPlayer,
   isBoardWon,
-  getInitialGameState,
-  getNextMove
+  getNextMove,
+  isGameStarted,
+  isMoveLeftInGame
 } from '../common/gameplayUtils';
-import Button from './Button';
-import { ActionTypes } from '../store/actionTypes';
+import {
+  setGameState,
+  setGameplayState,
+  incrementWinCount
+} from '../context/globalActions';
 
 const StyledGame = styled.div`
-  border-radius: 3px;
+  .board-wrapper {
+    border-radius: 4px;
+    background: #bbada0;
+    padding: 8px;
+  }
 
-  row {
+  .row {
     display: flex;
     flex-direction: row;
   }
 `;
 
 const PlayArea: React.FC = () => {
-  const [appState, dispatch] = React.useReducer<
-    React.Reducer<AppState, AppAction>
-  >(reducer, AppInitialState);
-
-  const [gameState, setGameState] = React.useState(
-    getInitialGameState(appState.boardCount, appState.gridSize)
+  const { state: appState, dispatch: dispatchToGlobal } = useContext(
+    GlobalStoreContext
   );
 
-  const isGameWon = () => {
-    const isWonByPlayer = isGameWonByPlayer(
-      gameState,
-      appState.playerType,
-      appState.gridSize
-    );
+  const updateGameplayState = () => {
+    const { gameState, playerType, gridSize, botType } = appState;
+
+    const isWonByPlayer = isGameWonByPlayer(gameState, playerType, gridSize);
 
     if (isWonByPlayer) {
-      return true;
+      dispatchToGlobal(setGameplayState(GameplayState.PlayerWon));
+      dispatchToGlobal(incrementWinCount());
+      return;
     }
 
-    const isWonByBot = isGameWonByPlayer(
-      gameState,
-      appState.botType,
-      appState.gridSize
-    );
+    const isWonByBot = isGameWonByPlayer(gameState, botType, gridSize);
 
-    return isWonByBot;
+    if (isWonByBot) {
+      dispatchToGlobal(setGameplayState(GameplayState.PlayerLoose));
+      return;
+    }
+
+    if (!isMoveLeftInGame(gameState, gridSize)) {
+      dispatchToGlobal(setGameplayState(GameplayState.Draw));
+    }
   };
 
   const makeMove = (
@@ -60,18 +63,28 @@ const PlayArea: React.FC = () => {
     col: number,
     value: PlayerType
   ) => {
-    const isGameEnded = isGameWon();
-    if (isGameEnded) {
+    const { gameplayState } = appState;
+    if (
+      gameplayState === GameplayState.PlayerLoose ||
+      gameplayState === GameplayState.PlayerWon ||
+      gameplayState === GameplayState.Draw
+    ) {
       return;
     }
 
-    const boardState = gameState[boardIndex].slice();
+    if (
+      appState.gameplayState === GameplayState.NotStarted &&
+      !isGameStarted(appState.gameState, appState.gridSize)
+    ) {
+      dispatchToGlobal(setGameplayState(GameplayState.Started));
+    }
+
+    const boardState = appState.gameState[boardIndex].slice();
     boardState[row][col] = value;
-    setGameState(prevState => [
-      ...prevState.slice(0, boardIndex),
-      boardState,
-      ...prevState.slice(boardIndex + 1)
-    ]);
+
+    dispatchToGlobal(setGameState(boardIndex, boardState));
+
+    updateGameplayState();
   };
 
   const onPlayerMove = (
@@ -83,7 +96,7 @@ const PlayArea: React.FC = () => {
     makeMove(boardIndex, row, col, playerType);
 
     const opponentMove = getNextMove(
-      gameState,
+      appState.gameState,
       appState.botType,
       appState.gridSize,
       appState.boardCount
@@ -99,13 +112,8 @@ const PlayArea: React.FC = () => {
   };
 
   const isGameBoardWon = (boardIndex: number) => {
-    const boardState = gameState[boardIndex];
+    const boardState = appState.gameState[boardIndex];
     return !!isBoardWon(boardState, appState.playerType, appState.gridSize);
-  };
-
-  const startNewGame = () => {
-    setGameState(getInitialGameState(appState.boardCount, appState.gridSize));
-    dispatch({ type: ActionTypes.INCREMENT_NUM_OF_GAMES });
   };
 
   const renderGameBoards = () => {
@@ -121,7 +129,7 @@ const PlayArea: React.FC = () => {
             <GameBoard
               key={row + col}
               playerType={appState.playerType}
-              gameState={gameState[bIndex]}
+              gameState={appState.gameState[bIndex]}
               isWon={isGameBoardWon(bIndex)}
               onClick={
                 (bRow, bCol) =>
@@ -145,12 +153,7 @@ const PlayArea: React.FC = () => {
 
   return (
     <StyledGame>
-      <div>
-        <Button onClick={startNewGame}>New Game</Button>
-        Is game won:
-        {isGameWon() ? 'true' : 'false'}
-      </div>
-      {renderGameBoards()}
+      <div className='board-wrapper'>{renderGameBoards()}</div>
     </StyledGame>
   );
 };
