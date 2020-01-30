@@ -13,6 +13,7 @@ const HowToContainer = styled.div`
   align-items: center;
   min-height: 500px;
   justify-content: space-evenly;
+  width: 100%;
 
   .game-title {
     font-size: 4rem;
@@ -42,7 +43,8 @@ const HowToContainer = styled.div`
   .game-control {
     display: flex;
     flex: 1;
-    align-items: flex-end;
+    align-items: center;
+    width: 100%;
   }
 
   .gameplay-state {
@@ -58,6 +60,12 @@ const HowToContainer = styled.div`
   .game-over {
     margin-top: 8px;
     margin-bottom: 8px;
+  }
+
+  @media screen and (max-width: 1260px) {
+    .game-control {
+      width: 60%;
+    }
   }
 `;
 
@@ -85,7 +93,7 @@ const HowTo: React.FC = () => {
     return (
       <>
         <div className='game-over'>
-          Game Over ! {GameplayStateText[gameplayState]}
+          Game Over! {GameplayStateText[gameplayState]}
         </div>
         <Button onClick={startNewGame}>New Game</Button>
       </>

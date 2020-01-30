@@ -8,7 +8,7 @@ const StyledGame = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 
   .game-controls {
     display: flex;
@@ -21,6 +21,7 @@ const StyledGame = styled.div`
     flex-basis: 100%;
     justify-content: center;
     align-content: center;
+    align-items: center;
   }
 
   @media screen and (min-width: 1260px) {
