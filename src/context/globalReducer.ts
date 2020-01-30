@@ -10,8 +10,8 @@ export const GRID_SIZE = 3;
 export interface State {
   botType: PlayerType;
   playerType: PlayerType;
-  winTimes: number;
-  numOfGames: number;
+  winCount: number;
+  gameCount: number;
   boardCount: number;
   gridSize: number;
   gameState: Array<GameBoardState>;
@@ -19,10 +19,10 @@ export interface State {
 }
 
 export const InitialState: State = {
-  botType: 'O',
-  numOfGames: 0,
-  playerType: 'X',
-  winTimes: 0,
+  botType: undefined,
+  gameCount: 1,
+  playerType: undefined,
+  winCount: 0,
   boardCount: BOARD_COUNT,
   gridSize: GRID_SIZE,
   gameState: getInitialGameState(BOARD_COUNT, GRID_SIZE),
@@ -53,13 +53,13 @@ export const globalReducer: Reducer<State, Action> = (state: State, action) => {
     case ActionTypes.INCREMENT_WIN_COUNT:
       return {
         ...state,
-        winTimes: state.winTimes + 1
+        winCount: state.winCount + 1
       };
 
     case ActionTypes.INCREMENT_GAME_COUNT:
       return {
         ...state,
-        numOfGames: state.numOfGames + 1
+        gameCount: state.gameCount + 1
       };
 
     case ActionTypes.SET_GAME_STATE:

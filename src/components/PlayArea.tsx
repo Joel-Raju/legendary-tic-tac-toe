@@ -64,6 +64,7 @@ const PlayArea: React.FC = () => {
     value: PlayerType
   ) => {
     const { gameplayState } = appState;
+
     if (
       gameplayState === GameplayState.PlayerLoose ||
       gameplayState === GameplayState.PlayerWon ||
@@ -93,6 +94,10 @@ const PlayArea: React.FC = () => {
     col: number,
     playerType: PlayerType
   ) => {
+    if (!appState.playerType || !appState.botType) {
+      return;
+    }
+
     makeMove(boardIndex, row, col, playerType);
 
     const opponentMove = getNextMove(

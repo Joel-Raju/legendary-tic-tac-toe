@@ -26,6 +26,7 @@ const StyledCell = styled.div<{ type: CellType }>`
   border-radius: 3px;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 
   @media (min-width: 768px) {
     width: 50px;

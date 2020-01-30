@@ -3,8 +3,13 @@ import styled from 'styled-components';
 import Button from './Button';
 import ScoreCard from './ScoreCard';
 import { GlobalStoreContext } from '../context/globalReducer';
-import { incrementGameCount, resetGameState } from '../context/globalActions';
-import { GameplayState, GameplayStateText } from '../common/types';
+import {
+  incrementGameCount,
+  resetGameState,
+  setPlayerType
+} from '../context/globalActions';
+import { GameplayState, GameplayStateText, PlayerType } from '../common/types';
+import GridCell from './GridCell';
 
 const HowToContainer = styled.div`
   display: flex;
@@ -62,6 +67,19 @@ const HowToContainer = styled.div`
     margin-bottom: 8px;
   }
 
+  .player-picker {
+    font-size: 1.25rem;
+    font-weight: bold;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+
+    .player-wrapper {
+      margin: 8px;
+    }
+  }
+
   @media screen and (max-width: 1260px) {
     .game-control {
       width: 60%;
@@ -100,6 +118,10 @@ const HowTo: React.FC = () => {
     );
   };
 
+  const onChoosePlayer = (player: PlayerType) => {
+    dispatchToGlobal(setPlayerType(player));
+  };
+
   return (
     <HowToContainer>
       <h1 className='game-title'>Legendary Tic Tac Toe</h1>
@@ -116,13 +138,33 @@ const HowTo: React.FC = () => {
           </li>
         </ul>
       </div>
-      <div className='game-control'>
-        <div className='gameplay-state'>{renderGameEndState()}</div>
-        <div className='score-card'>
-          <ScoreCard score={appState.winTimes} label='Won' />
-          <ScoreCard score={appState.numOfGames} label='Games' />
+      {!appState.playerType || !appState.botType ? (
+        <div className='player-picker'>
+          Choose your player:
+          <div className='player-wrapper'>
+            <GridCell
+              playerType='X'
+              value='X'
+              onClick={() => onChoosePlayer('X')}
+            />
+          </div>
+          <div className='player-wrapper'>
+            <GridCell
+              playerType='O'
+              value='O'
+              onClick={() => onChoosePlayer('O')}
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className='game-control'>
+          <div className='gameplay-state'>{renderGameEndState()}</div>
+          <div className='score-card'>
+            <ScoreCard score={appState.winCount} label='Won' />
+            <ScoreCard score={appState.gameCount} label='Games' />
+          </div>
+        </div>
+      )}
     </HowToContainer>
   );
 };
