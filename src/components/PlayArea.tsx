@@ -98,6 +98,22 @@ const PlayArea: React.FC = () => {
       return;
     }
 
+    const isWonByPlayer = isBoardWon(
+      appState.gameState[boardIndex],
+      appState.playerType,
+      appState.gridSize
+    );
+
+    const isWonByBot = isBoardWon(
+      appState.gameState[boardIndex],
+      appState.botType,
+      appState.gridSize
+    );
+
+    if (isWonByPlayer || isWonByBot) {
+      return;
+    }
+
     makeMove(boardIndex, row, col, playerType);
 
     const opponentMove = getNextMove(
